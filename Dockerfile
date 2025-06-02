@@ -18,14 +18,11 @@ WORKDIR /opt
 RUN curl -LO https://dl.mercurylang.org/release/mercury-srcdist-22.01.1.tar.gz && \
     tar -xzf mercury-srcdist-22.01.1.tar.gz
 
-# Compilar Mercury
+# Compilar e instalar Mercury
 WORKDIR /opt/mercury-srcdist-22.01.1
-RUN ./configure --with-llds-base-grade=none && \
-    make PARALLEL=-j$(nproc) all
-
-# Agregar al PATH
-ENV MERCURY_HOME=/opt/mercury-srcdist-22.01.1
-ENV PATH="${MERCURY_HOME}/stage2/scripts:${PATH}"
+RUN ./configure --prefix=/usr/local --with-llds-base-grade=none && \
+    make PARALLEL=-j$(nproc) all && \
+    make install
 
 # Verifica que mmc esté disponible (debug temporal)
 RUN which mmc && mmc --version
