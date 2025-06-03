@@ -7,7 +7,7 @@
 
 :- implementation.
 
-:- import_module bag, category, item, ui, packing_rules.
+:- import_module bolsa, category, item, ui, packing_rules.
 
 % Main predicate to run the application
 main(!IO) :-
@@ -17,7 +17,7 @@ main(!IO) :-
     ui.init(!IO),
     
     % Create initial empty state with some bags
-    Bags = [bag.create(1), bag.create(2), bag.create(3)],
+    Bags = [bolsa.create(1), bolsa.create(2), bolsa.create(3)],
     
     % Sample items for testing (in real app, these would be added by user)
     Items = [

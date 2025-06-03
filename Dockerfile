@@ -1,49 +1,52 @@
-FROM debian:bullseye
+FROM ubuntu:jammy
 
-# Dependencias necesarias
+# 1. Instalar dependencias con versión específica
 RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
     build-essential \
-    curl \
-    m4 \
-    pkg-config \
-    zlib1g-dev \
-    libatomic1 \
-    git \
+    autoconf \
+    automake \
     flex \
     bison \
-    && rm -rf /var/lib/apt/lists/*
+    git \
+    pkg-config \
+    libncurses-dev \
+    zlib1g-dev \
+    libreadline-dev \
+    libgmp-dev \
+    libssl-dev \
+    unzip \
+    python3 \
+    cmake \
+    ninja-build
 
-# Copiar el archivo Mercury local al contenedor
-COPY mercury-srcdist-22.01.8.tar.gz /opt/
-
-# Descomprimir Mercury
-WORKDIR /opt
-RUN tar -xzf mercury-srcdist-22.01.8.tar.gz && \
-    rm mercury-srcdist-22.01.8.tar.gz  # Eliminar el comprimido
-
-# Definir MERCURY_HOME
-ENV MERCURY_HOME=/opt/mercury-srcdist-22.01.8
-
-# Compilar e instalar Mercury
-WORKDIR ${MERCURY_HOME}
-RUN ./configure --prefix="${MERCURY_HOME}/stage2" --with-llds-base-grade=none && \
-    make PARALLEL=-j$(nproc) all && \
+# 2. Descargar y compilar Mercury con configuración optimizada
+RUN cd /tmp && \
+    wget https://github.com/Mercury-Language/mercury-srcdist/archive/refs/tags/rotd-2025-06-02.tar.gz && \
+    tar xvf rotd-2025-06-02.tar.gz && \
+    cd mercury-srcdist-rotd-2025-06-02 && \
+    ./configure \
+        --prefix=/usr/local/mercury-rotd \
+        --enable-java-grade \
+        --enable-csharp-grade \
+        --disable-most-grades \
+        --enable-debug \
+        --enable-static && \
+    make PARALLEL=$(nproc) && \
     make install
 
-# Agregar al PATH
-ENV PATH="${MERCURY_HOME}/stage2/bin:${PATH}"
+# 3. Configurar entorno
+ENV PATH="/usr/local/mercury-rotd/bin:${PATH}"
+ENV MERCURY_OPTIONS="-O0"
 
-# Verificar instalación
-RUN which mmc && mmc --version
+# 4. Verificar instalación
+RUN mmc --version
 
-# Carpeta de trabajo del proyecto
+# 5. Copiar y compilar empacador.m
+COPY empacador.m /app/
 WORKDIR /app
-
-# Copiar fuente Mercury
-COPY . .
-
-# Compilar tu programa
 RUN mmc --make empacador
 
-# Ejecutar
-CMD ["./empacador"]
+# 6. Limpieza para reducir tamaño de imagen
+RUN rm -rf /tmp/* /var/lib/apt/lists/*

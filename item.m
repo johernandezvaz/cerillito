@@ -21,6 +21,5 @@
 
 create(Name, Category, Weight) = item(Name, Category, Weight).
 
-name(item(Name, _, _)) = Name.
-category(item(_, Category, _)) = Category.
-weight(item(_, _, Weight)) = Weight.
+% Remove the explicit accessor function implementations
+% Mercury automatically generates these functions because of the :: notation

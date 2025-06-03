@@ -1,15 +1,13 @@
 :- module packing_rules.
 :- interface.
 
-:- import_module list, item, category.
+:- import_module list, item, category, bolsa.
 
 :- pred should_pack_separately(item.item::in, item.item::in) is semidet.
 :- pred should_pack_together(item.item::in, item.item::in) is semidet.
-:- pred ideal_bag_for_item(item.item::in, list(bag.bag)::in, bag.bag::out) is semidet.
+:- pred ideal_bag_for_item(item.item::in, list(bolsa.bag)::in, bolsa.bag::out) is semidet.
 
 :- implementation.
-
-:- import_module bag.
 
 % Items that should never be packed together
 should_pack_separately(Item1, Item2) :-
@@ -41,46 +39,43 @@ should_pack_together(Item1, Item2) :-
 
 % Find the ideal bag for an item from available bags
 ideal_bag_for_item(Item, Bags, IdealBag) :-
-    % First check if there's a bag with items of the same category
+    % First try to find a bag with same category items
     ItemCat = item.category(Item),
-    (
-        % Try to find a bag with same category items
-        find_bag_with_category(ItemCat, Bags, FoundBag),
-        bag.can_add_item(FoundBag, Item),
+    (if find_bag_with_category(ItemCat, Bags, FoundBag),
+        bolsa.can_add_item(FoundBag, Item)
+    then
         IdealBag = FoundBag
-    ;
-        % Otherwise, find any compatible bag
-        find_compatible_bag(Item, Bags, CompatBag),
-        IdealBag = CompatBag
+    else
+        % If no bag with same category found, try any compatible bag
+        find_first_compatible_bag(Item, Bags, IdealBag)
     ).
 
 % Helper to find a bag containing items of a specific category
-:- pred find_bag_with_category(category.category::in, list(bag.bag)::in, bag.bag::out) is semidet.
-find_bag_with_category(_, [], _) :- fail.
+:- pred find_bag_with_category(category.category::in, list(bolsa.bag)::in, bolsa.bag::out) is semidet.
 find_bag_with_category(Cat, [Bag | Rest], FoundBag) :-
-    BagItems = bag.items(Bag),
-    (
-        has_category_item(BagItems, Cat),
+    BagItems = bolsa.items(Bag),
+    (if has_category_item(BagItems, Cat)
+    then
         FoundBag = Bag
-    ;
+    else
         find_bag_with_category(Cat, Rest, FoundBag)
     ).
 
 % Check if a list of items contains at least one item of the given category
 :- pred has_category_item(list(item.item)::in, category.category::in) is semidet.
-has_category_item([], _) :- fail.
-has_category_item([Item | _], Cat) :-
-    item.category(Item) = Cat.
-has_category_item([_ | Rest], Cat) :-
-    has_category_item(Rest, Cat).
-
-% Find any bag that can hold the item
-:- pred find_compatible_bag(item.item::in, list(bag.bag)::in, bag.bag::out) is semidet.
-find_compatible_bag(_, [], _) :- fail.
-find_compatible_bag(Item, [Bag | Rest], CompatBag) :-
+has_category_item([Item | Rest], Cat) :-
     (
-        bag.can_add_item(Bag, Item),
-        CompatBag = Bag
+        item.category(Item) = Cat
     ;
-        find_compatible_bag(Item, Rest, CompatBag)
+        has_category_item(Rest, Cat)
+    ).
+
+% Find first compatible bag that can hold the item
+:- pred find_first_compatible_bag(item.item::in, list(bolsa.bag)::in, bolsa.bag::out) is semidet.
+find_first_compatible_bag(Item, [Bag | Rest], CompatBag) :-
+    (if bolsa.can_add_item(Bag, Item)
+    then
+        CompatBag = Bag
+    else
+        find_first_compatible_bag(Item, Rest, CompatBag)
     ).

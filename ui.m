@@ -1,17 +1,17 @@
 :- module ui.
 :- interface.
 
-:- import_module io, list, bag, item.
+:- import_module io, list, bolsa, item.
 
 :- pred init(io::di, io::uo) is det.
 :- pred cleanup(io::di, io::uo) is det.
-:- pred main_loop(list(bag.bag)::in, list(item.item)::in, io::di, io::uo) is det.
+:- pred main_loop(list(bolsa.bag)::in, list(item.item)::in, io::di, io::uo) is det.
 
 :- implementation.
 
 :- import_module category, packing_rules, string, int.
 
-% Initialize the UI system (would connect to a graphics library in a real implementation)
+% Initialize the UI system
 init(!IO) :-
     io.write_string("Iniciando interfaz gráfica...\n", !IO).
 
@@ -28,14 +28,17 @@ main_loop(Bags, Items, !IO) :-
     io.read_line_as_string(Result, !IO),
     (
         Result = ok(Input),
-        ( 
-            Input = "salir",
+        StrippedInput = string.strip(Input),
+        (if StrippedInput = "salir"
+        then
             true  % Exit loop
-        ;
-            Input \= "salir",
-            process_input(Input, Bags, NewBags, Items, NewItems, !IO),
+        else
+            process_input(StrippedInput, Bags, NewBags, Items, NewItems, !IO),
             main_loop(NewBags, NewItems, !IO)
         )
+    ;
+        Result = eof,
+        true  % Exit on EOF
     ;
         Result = error(_),
         io.write_string("Error de entrada. Inténtalo de nuevo.\n", !IO),
@@ -43,18 +46,13 @@ main_loop(Bags, Items, !IO) :-
     ).
 
 % Process user input and update state
-:- pred process_input(string::in, list(bag.bag)::in, list(bag.bag)::out, 
+:- pred process_input(string::in, list(bolsa.bag)::in, list(bolsa.bag)::out, 
                      list(item.item)::in, list(item.item)::out, io::di, io::uo) is det.
 process_input(Input, !Bags, !Items, !IO) :-
-    % In a real implementation, this would parse commands and update the simulation
-    % For this example, we'll just show a message
-    io.format("Procesando comando: %s\n", [s(Input)], !IO),
-    % No actual changes in this demo
-    !:Bags = !.Bags,
-    !:Items = !.Items.
+    io.format("Procesando comando: %s\n", [s(Input)], !IO).
 
-% Draw the UI (in a real implementation, this would render graphics)
-:- pred draw_ui(list(bag.bag)::in, list(item.item)::in, io::di, io::uo) is det.
+% Draw the UI
+:- pred draw_ui(list(bolsa.bag)::in, list(item.item)::in, io::di, io::uo) is det.
 draw_ui(Bags, Items, !IO) :-
     io.write_string("\n========== SIMULADOR DE EMPACADOR ==========\n\n", !IO),
     
@@ -86,17 +84,16 @@ draw_item(Item, !IO) :-
     io.format("  - %s (%s, %.1fkg)\n", [s(Name), s(CatName), f(Weight)], !IO).
 
 % Draw a single bag
-:- pred draw_bag(bag.bag::in, io::di, io::uo) is det.
+:- pred draw_bag(bolsa.bag::in, io::di, io::uo) is det.
 draw_bag(Bag, !IO) :-
-    ID = bag.id(Bag),
-    BagItems = bag.items(Bag),
-    TotalWeight = bag.total_weight(Bag),
+    ID = bolsa.id(Bag),
+    BagItems = bolsa.items(Bag),
+    TotalWeight = bolsa.total_weight(Bag),
     io.format("  Bolsa #%d (%.1fkg):\n", [i(ID), f(TotalWeight)], !IO),
-    (
-        BagItems = [],
+    (if list.is_empty(BagItems)
+    then
         io.write_string("    (vacía)\n", !IO)
-    ;
-        BagItems \= [],
+    else
         list.foldl(draw_bag_item, BagItems, !IO)
     ).
 
