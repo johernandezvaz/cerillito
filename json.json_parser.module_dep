@@ -1,0 +1,14 @@
+module(2, "json.json_parser.m",
+	(json.json_parser),
+	{json},
+	{builtin, private_builtin},
+	{(string.format), (string.parse_util)},
+	{},
+	{},
+	{},
+	{},
+	{},
+	no_foreign_export,
+	no_main,
+	{}
+).

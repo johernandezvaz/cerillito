@@ -1,0 +1,75 @@
+// Automatically generated from `json.char_buffer.m'
+// by the Mercury compiler,
+// version 22.01.8-1~noble
+// configured for x86_64-pc-linux-gnu.
+// Do not edit.
+#ifndef JSON__CHAR_BUFFER_MH
+#define JSON__CHAR_BUFFER_MH
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef MR_HIGHLEVEL_CODE
+#include "mercury.h"
+#else
+  #ifndef MERCURY_HDR_EXCLUDE_IMP_H
+  #include "mercury_imp.h"
+  #endif
+#endif
+#ifdef MR_DEEP_PROFILING
+#include "mercury_deep_profiling.h"
+#endif
+
+#ifndef JSON__CHAR_BUFFER_DECL_GUARD
+#define JSON__CHAR_BUFFER_DECL_GUARD
+
+
+#include "mercury_float.h"    /* For MR_FLT_FMT. */
+#include "mercury_memory.h"
+#include "mercury_string.h"
+
+#include <stdio.h>  /* For sscanf. */
+
+/*
+** Defining the macro MJSON_DEBUG_BUFFER will cause some debugging traces
+** to be printed to the standard error.
+*/
+
+/*
+** The initial size of the character buffer in bytes.
+** You probably don't need to change this, but if you do it must be >= 5.
+** (We always reserve space for four bytes -- the maximum required for a
+** code point -- plus a nul terminator.
+*/
+#define MJSON_INITIAL_BUFFER_SIZE 512
+
+/*
+** The C version of a character buffer. It contains the following fields:
+**
+** last_char    The character code of the last character that was added
+**              to the buffer. If the buffer is empty then this == 0.
+**
+** num_bytes    The number of bytes used to hold characters in the buffer.
+**
+** max_bytes    The maximum number of bytes the buffer can currently hold.
+**
+** contents     The contents of the buffer -- stored as a UTF-8 encoded
+**              string.
+*/
+typedef struct {
+    MR_Char     last_char;
+    size_t      num_bytes;
+    size_t      max_bytes;
+    MR_String   contents;
+} MJSON_buffer;
+
+
+
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* JSON__CHAR_BUFFER_MH */

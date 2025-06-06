@@ -17,6 +17,10 @@ should_pack_separately(Item1, Item2) :-
         % Food and chemicals should never mix
         (Cat1 = category.chemicals, category_is_food(Cat2)) ;
         (Cat2 = category.chemicals, category_is_food(Cat1)) ;
+
+        % Productos de limpieza y alimentos
+        (Cat1 = category.cleaning, category_is_food(Cat2)) ;
+        (Cat2 = category.cleaning, category_is_food(Cat1)) ;
         
         % Heavy items should be in separate bags from fragile items
         (Cat1 = category.heavy, Cat2 = category.fragile) ;

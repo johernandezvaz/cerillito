@@ -1,0 +1,14 @@
+module(2, "json.unmarshal.m",
+	(json.unmarshal),
+	{json},
+	{builtin, private_builtin},
+	{int16, int32, int8, stream, type_desc, uint16, uint8, (string.format), (string.parse_util)},
+	{},
+	{},
+	{},
+	{},
+	{},
+	no_foreign_export,
+	no_main,
+	{}
+).

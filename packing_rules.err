@@ -1,0 +1,3 @@
+packing_rules.m:004: In module `packing_rules':
+packing_rules.m:004:   warning: module `category' is imported in the interface,
+packing_rules.m:004:   but it is not used in the interface.

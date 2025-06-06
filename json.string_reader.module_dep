@@ -1,0 +1,14 @@
+module(2, "json.string_reader.m",
+	(json.string_reader),
+	{json},
+	{builtin, char, maybe, private_builtin, stream},
+	{int, store},
+	{},
+	{},
+	{},
+	{},
+	{},
+	no_foreign_export,
+	no_main,
+	{}
+).

@@ -27,7 +27,7 @@
             ).
 
 % Crear una nueva bolsa vacía
-create(ID) = bag(ID, [], 0.0, 5.0).  % 5kg peso máximo
+create(ID) = bag(ID, [], 0.0, 10.0).  % 5kg peso máximo
 
 % Verificar si se puede agregar un ítem
 can_add_item(Bag, Item) :-

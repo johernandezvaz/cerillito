@@ -1,0 +1,22 @@
+json.writer.m:101: In clause for predicate `raw_put_value'/4:
+json.writer.m:101:   in argument 1 of call to predicate
+json.writer.m:101:   `json.writer.raw_put_object'/4:
+json.writer.m:101:   type error: variable `Writer' has type
+json.writer.m:101:     `(some [Stream] json.writer(Stream))',
+json.writer.m:101:   expected type was
+json.writer.m:101:     `json.writer.json_writer(Stream)'.
+json.writer.m:116: In clause for predicate `raw_put_object'/4:
+json.writer.m:116:   unsatisfiable typeclass constraint:
+json.writer.m:116:   `stream.writer(Stream, character, State)'.
+json.writer.m:118: In clause for predicate `raw_put_object'/4:
+json.writer.m:118:   in argument 1 of call to predicate
+json.writer.m:118:   `json.writer.raw_put_members'/4:
+json.writer.m:118:   type error: variable `Writer' has type
+json.writer.m:118:     `(some [Stream] json.writer.json_writer(Stream))',
+json.writer.m:118:   expected type was
+json.writer.m:118:     `json.writer(Stream)'.
+json.writer.m:119: In clause for predicate `raw_put_object'/4:
+json.writer.m:119:   unsatisfiable typeclass constraints:
+json.writer.m:119:   `stream.writer(Stream, character, State)',
+json.writer.m:119:   `stream.writer(Stream, string, State)' and
+json.writer.m:119:   `stream.writer(Stream, character, State)'.

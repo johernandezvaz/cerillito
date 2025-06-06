@@ -55,6 +55,7 @@ compatible_categories(dairy, bakery).
 compatible_categories(bakery, dairy).
 compatible_categories(meat, frozen).
 compatible_categories(frozen, meat).
+compatible_categories(cleaning, cleaning).
 
 % Cleaning supplies can go together but not with food
 compatible_categories(cleaning, cleaning).
